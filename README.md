@@ -6,7 +6,7 @@ The dataset I’m working with captures nutritional analysis of fruit food items
 
 I retained the structure of this database using MySQL on an Amazon EC2 instance. The main reason I chose to use a relational database has to do with scaling. This database is unlikely to need to be scaled quickly. New foods or nutrient types are not discovered at high rates and so the database will not need to be able to accommodate the level of growth that would justify the use of a NoSQL database. The relational nature of this database also allows for individual nutrients to be entered for a specified fruit into the associative table without disturbing the other nutrient values for that fruit.
 
-As a result of only using fruit, I no longer needed a food category table. To fully preserve the original structure, I created a fruit category table and categorized each fruit item into one of these categories. Botanically, fruits are categorized using three broad labels: simple, aggregate, and multiple. Briefly, these categories have to do with how the edible fruit (the ovary) grows on the plant. I created this table to mimic the types of queries that might have been performed using the original food category table (e.g. filtering foods by category to perform more detailed queries).
+As a result of only using fruit, I no longer needed a food category table. To fully preserve the original structure, I created a fruit category table and categorized each fruit item into one of these categories. Botanically, fruits are categorized using three broad labels: simple, aggregate, and multiple. Briefly, these categories have to do with how the edible fruit (the ovary) grows on the plant. I created this table to mimic the types of  that might have been performed using the original food category table (e.g. filtering foods by category to perform more detailed ).
 
 The data was available for download in csv format, so I cleaned it up in excel before feeding it into my tables on MySQL workbench. I had to enter the tables in a specific order so I could enter in the foreign key IDs properly, that order being: serving_measurements, fruit_category, fruit_list, nutrient_types, and nutrient_values.
 
@@ -123,7 +123,7 @@ The nutrient_values table captures the many-to-many relationship between fruit_l
 
 
 
-# QUERIES:
+## QUERIES:
 This basic query retrieves the specified nutrient value (in this case potassium) for a specified fruit item (raw nectarines). The fruit search is done using LIKE, which is an important tool for this dataset given the string descriptions of fruit names and the possible multiple entries for one fruit item:<br><br>
 <code>USE fruit_composition;
 SELECT apricot.description, nutrient.name, nutrient_value.amount, nutrient.measurement
@@ -303,69 +303,58 @@ ALTER TABLE nutrient_values ADD INDEX (fruit_id);</code>
 
 Below is a walk-through of how to set up an RDS (relational database service) instance so that read-replicas can be created on that instance. I populated the read-replicas using mysqldump just to demonstrate that they were operational, though in practice it would be better to set up a database migration service to automatically update the RDS instance with any changes to the MySQL server on the EC2 instance.
 
-In the RDS dashboard click on Databases and click Create database.
-
+In the RDS dashboard click on Databases and click Create database:
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/d6b11ca4-12b8-4581-9b72-e76a81cdff5f)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/dc9cb517-47e2-4e3d-80db-4272c0c5cd3b)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/7eda278e-e916-4d19-a5fd-ff60db1324d9)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/58943489-fb6a-4fdc-bc46-790334bb0966)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/9b0418c2-7d35-470e-83d7-3972796f5808)
-
-
-Importantly, connect the new database to the EC2 instance the MySQL server is running on.
-
+<br><br>
+Importantly, connect the new database to the EC2 instance the MySQL server is running on:
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/d1cc6b67-e623-4494-a2aa-cb06dee1fa10)
-
-
-If all goes well.
-
+<br><br>
+If all goes well:
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/fc22e07c-9398-4003-a150-10c2b5909e0e)
-
-
-Now a replica can be created.
- 
+<br><br>
+Now a replica can be created:
+ <br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/1d228cb0-820f-47ff-bde0-66de5c9204f3)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/464af298-ef3d-4be8-9ccb-d86996b3e3e9)
-
-
-Now this database has a read replica.
-
+<br><br>
+Now this database has a read replica:
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/f5248dc8-4bee-4d40-b004-e46dc234b092)
-
-
+<br><br>
 Both this database and its replica can be accessed through the EC2 instance with this command (replacing the name after -h with the name of the desired instance):
-
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/80c363ad-467b-4d2e-8ece-14e1ff14ac95)
-
-
+<br><br>
 Since the database I’m using isn’t enormous, I used mysqldump to transfer the data to the RDS database.
-
-I created a database called fruit_composition in the RDS database, then used mysqldump to transfer the data into that database.
-
+<br><br>
+I created a database called fruit_composition in the RDS database, then used mysqldump to transfer the data into that database:
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/fe2202d4-c591-4b80-80fc-1c4c5ef6a3c0)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/2c587bea-74a8-4b8e-9110-00735ee31b15)
-
-
+<br><br>
 Connect to the replica of the RDS database to see if the data came through:
-
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/fcf58fd1-60d4-4a98-8a0e-1107cccba982)
-
-
+<br><br>
 Test queries to show that the replica database is populated:
- 
+<br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/137d31eb-34ec-4245-9b5d-6e99b69d05ad)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/7002291e-ca48-4c2a-8026-86a680d1e1f9)
-
+<br><br>
 ![alt text](https://github.com/s-hatch/CSCIE-59_graduate_credit_assignment/assets/113044909/8e16a41e-3b73-4b64-9938-b2553bf6b135)
-
- 
-
-
+<br><br><br>
 [Data source](https://data.nal.usda.gov/dataset/composition-foods-raw-processed-prepared-usda-national-nutrient-database-standard-reference-release-27)
